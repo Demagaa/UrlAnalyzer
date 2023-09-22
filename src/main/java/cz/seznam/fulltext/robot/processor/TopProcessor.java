@@ -1,5 +1,7 @@
 package cz.seznam.fulltext.robot.processor;
 
+import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,7 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TopProcessor {
-    public static void runTopProcessor(String fileName) {
+    private TopProcessor() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static void runTopProcessor(String fileName) throws InvalidFileFormatException {
         Map<String, Integer> urlClickCounts = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -32,7 +38,7 @@ public class TopProcessor {
                     .limit(10) // Limit to the top 10 URLs
                     .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue()));
         } catch (IOException e) {
-            throw new RuntimeException("Bad file format");
+            throw new InvalidFileFormatException("Bad file format");
         }
     }
 }

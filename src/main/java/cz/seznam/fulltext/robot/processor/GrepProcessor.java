@@ -1,5 +1,7 @@
 package cz.seznam.fulltext.robot.processor;
 
+import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,7 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GrepProcessor {
-    public static void runGrepProcessor(String fileName, String regex) {
+
+    private GrepProcessor() {
+        throw new IllegalStateException("Utility class");
+    }
+    public static void runGrepProcessor(String fileName, String regex) throws InvalidFileFormatException {
         Pattern pattern = Pattern.compile(regex);
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -18,7 +24,7 @@ public class GrepProcessor {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException("Bad file format");
+            throw new InvalidFileFormatException("Bad file format");
         }
     }
 }

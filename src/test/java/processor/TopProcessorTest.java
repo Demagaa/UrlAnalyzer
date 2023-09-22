@@ -1,5 +1,6 @@
 package processor;
 
+import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
 import cz.seznam.fulltext.robot.processor.TopProcessor;
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +31,7 @@ public class TopProcessorTest {
     }
 
     @Test
-    public void testRunTopProcessor() {
+    public void testRunTopProcessor() throws InvalidFileFormatException {
         // Run the processor
         TopProcessor.runTopProcessor(fileName);
 

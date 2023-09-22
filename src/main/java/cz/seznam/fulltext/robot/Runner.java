@@ -1,6 +1,8 @@
 package cz.seznam.fulltext.robot;
 
 
+import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
+import cz.seznam.fulltext.robot.exception.UnsupportedProcessingTypeException;
 import cz.seznam.fulltext.robot.processor.ContentTypeProcessor;
 import cz.seznam.fulltext.robot.processor.GrepProcessor;
 import cz.seznam.fulltext.robot.processor.TopProcessor;
@@ -40,7 +42,6 @@ import cz.seznam.fulltext.robot.processor.TopProcessor;
  *
  * <pre>
  * $ cat input.txt | java -classpath . cz.seznam.fulltext.robot.Runner &lt;className&gt; [&lt;processor parameters&gt;]
- * Get-Content .\data\10000.txt | java -classpath "C:\private\java\interview\target\classes" cz.seznam.fulltext.robot.Runner Top
  * </pre>
  *
  * <p>Structure of the application's output depends on the processor <code>className</code> used:
@@ -65,48 +66,51 @@ import cz.seznam.fulltext.robot.processor.TopProcessor;
  *
  * <p>Try to minimize the application's memory footprint and CPU usage.
  */
+
+/**
+ * Command used for test on Windows environment:
+ *  Get-Content .\data\10000.txt | java -classpath ".\target\classes" cz.seznam.fulltext.robot.Runner
+ */
 public class Runner {
-    //Todo move to application.properties
-    private static final String fileName = "./data/10000.txt"; // Specify the file path as needed
+    private static final String FILE_NAME = "./data/10000.txt"; // Specify the file path as needed
     private static String regex;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedProcessingTypeException, InvalidFileFormatException {
         checkArgs(args);
         String className = args[0];
         process(className);
     }
 
-    static void checkArgs(String[] args) {
+    static void checkArgs(String[] args) throws UnsupportedProcessingTypeException {
         if (args.length == 0) {
-            throw new RuntimeException("Please specify mod type as parameter");
+            throw new IllegalArgumentException("Please specify mod type as parameter");
         } else if (args[0].equals("Grep")) {
             if (args.length < 2) {
-                throw new RuntimeException("Please specify regular expression");
+                throw new IllegalArgumentException("Please specify regular expression");
             } else {
                 regex = args[1];
             }
         } else if (!(args[0].equals("Top") || args[0].equals("ContentType"))) {
-            //todo define custom exception
-            throw new RuntimeException("Please specify correct mod type");
+            throw new UnsupportedProcessingTypeException("Unsupported processing type: " + args[0]);
         }
     }
 
     /**
      * Read lines from standard input and process each using given processor.
      */
-    static void process(String processingType) {
+    static void process(String processingType) throws InvalidFileFormatException, UnsupportedProcessingTypeException {
         switch (processingType) {
             case "Top":
-                TopProcessor.runTopProcessor(fileName);
+                TopProcessor.runTopProcessor(FILE_NAME);
                 break;
             case "Grep":
-                GrepProcessor.runGrepProcessor(fileName, regex);
+                GrepProcessor.runGrepProcessor(FILE_NAME, regex);
                 break;
             case "ContentType":
-                ContentTypeProcessor.runContentTypeProcessor(fileName);
+                ContentTypeProcessor.runContentTypeProcessor(FILE_NAME);
                 break;
             default:
-                throw new RuntimeException("Unsupported processing type: " + processingType);
+                throw new UnsupportedProcessingTypeException("Unsupported processing type: " + processingType);
         }
     }
 }
