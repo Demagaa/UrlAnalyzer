@@ -1,42 +1,34 @@
 package cz.seznam.fulltext.robot.processor;
 
 import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
+import cz.seznam.fulltext.robot.processor.api.Processor;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContentTypeProcessor {
-    private ContentTypeProcessor() {
-        throw new IllegalStateException("Utility class");
-    }
-    public static void runContentTypeProcessor(String fileName) throws InvalidFileFormatException {
+public class ContentTypeProcessor implements Processor {
+
+    public void process(String regex) {
         Map<String, Integer> contentTypeCounts = new HashMap<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\t");
-                if (parts.length != 3) {
-                    // Invalid input line, skipping
-                    continue;
-                }
-
-                String contentType = parts[1];
-
-                // Update or initialize the count for the content type
-                contentTypeCounts.put(contentType, contentTypeCounts.getOrDefault(contentType, 0) + 1);
+        String line = "";
+        while (line.isEmpty()) {
+            String[] parts = line.split("\t");
+            if (parts.length != 3) {
+                // Invalid input line, skipping
+                continue;
             }
 
-            // Sort and output the content type counts
-            contentTypeCounts.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue()));
-        } catch (IOException e) {
-            throw new InvalidFileFormatException("Bad file format");
+            String contentType = parts[1];
 
+            // Update or initialize the count for the content type
+            contentTypeCounts.put(contentType, contentTypeCounts.getOrDefault(contentType, 0) + 1);
         }
+
+        // Sort and output the content type counts
+        contentTypeCounts.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue()));
+
     }
 }

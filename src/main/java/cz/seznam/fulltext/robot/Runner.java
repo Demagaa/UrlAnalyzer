@@ -5,7 +5,9 @@ import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
 import cz.seznam.fulltext.robot.exception.UnsupportedProcessingTypeException;
 import cz.seznam.fulltext.robot.processor.ContentTypeProcessor;
 import cz.seznam.fulltext.robot.processor.GrepProcessor;
+import cz.seznam.fulltext.robot.processor.ProcessorType;
 import cz.seznam.fulltext.robot.processor.TopProcessor;
+import cz.seznam.fulltext.robot.processor.api.Processor;
 
 /**
  * Your task is to implement the following application to the best of your abilities:
@@ -69,16 +71,17 @@ import cz.seznam.fulltext.robot.processor.TopProcessor;
 
 /**
  * Command used for test on Windows environment:
- *  Get-Content .\data\10000.txt | java -classpath ".\target\classes" cz.seznam.fulltext.robot.Runner
+ * Get-Content .\data\10000.txt | java -classpath ".\target\classes" cz.seznam.fulltext.robot.Runner
  */
 public class Runner {
-    private static final String FILE_NAME = "./data/10000.txt"; // Specify the file path as needed
     private static String regex;
 
     public static void main(String[] args) throws UnsupportedProcessingTypeException, InvalidFileFormatException {
         checkArgs(args);
         String className = args[0];
-        process(className);
+        String processorTypeStr = className.toUpperCase();
+        ProcessorType processorType = ProcessorType.valueOf(processorTypeStr);
+        process(processorType);
     }
 
     static void checkArgs(String[] args) throws UnsupportedProcessingTypeException {
@@ -98,19 +101,26 @@ public class Runner {
     /**
      * Read lines from standard input and process each using given processor.
      */
-    static void process(String processingType) throws InvalidFileFormatException, UnsupportedProcessingTypeException {
-        switch (processingType) {
-            case "Top":
-                TopProcessor.runTopProcessor(FILE_NAME);
+    static void process(ProcessorType processorType) throws InvalidFileFormatException {
+        Processor processor;
+
+        switch (processorType) {
+            case TOP:
+                processor = new TopProcessor();
                 break;
-            case "Grep":
-                GrepProcessor.runGrepProcessor(FILE_NAME, regex);
+            case CONTENT_TYPE:
+                processor = new ContentTypeProcessor();
                 break;
-            case "ContentType":
-                ContentTypeProcessor.runContentTypeProcessor(FILE_NAME);
+            case GREP:
+                processor = new GrepProcessor();
                 break;
             default:
-                throw new UnsupportedProcessingTypeException("Unsupported processing type: " + processingType);
+                System.out.println("Invalid processor type.");
+                return;
         }
+
+        // Process the data
+        processor.process(regex);
     }
 }
+
