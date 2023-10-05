@@ -3,10 +3,10 @@ package cz.seznam.fulltext.robot;
 
 import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
 import cz.seznam.fulltext.robot.exception.UnsupportedProcessingTypeException;
-import cz.seznam.fulltext.robot.processor.ContentTypeProcessor;
-import cz.seznam.fulltext.robot.processor.GrepProcessor;
-import cz.seznam.fulltext.robot.processor.ProcessorType;
-import cz.seznam.fulltext.robot.processor.TopProcessor;
+import cz.seznam.fulltext.robot.processor.implementation.ContentTypeProcessor;
+import cz.seznam.fulltext.robot.processor.implementation.GrepProcessor;
+import cz.seznam.fulltext.robot.processor.enums.ProcessorType;
+import cz.seznam.fulltext.robot.processor.implementation.TopProcessor;
 import cz.seznam.fulltext.robot.processor.api.Processor;
 
 /**

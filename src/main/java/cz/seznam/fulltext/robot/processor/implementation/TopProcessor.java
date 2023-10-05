@@ -1,33 +1,33 @@
-package cz.seznam.fulltext.robot.processor;
+package cz.seznam.fulltext.robot.processor.implementation;
 
+import cz.seznam.fulltext.robot.entity.URLData;
+import cz.seznam.fulltext.robot.exception.InvalidFileFormatException;
 import cz.seznam.fulltext.robot.processor.api.Processor;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class TopProcessor implements Processor {
 
     Map<String, Integer> urlClickCounts = new HashMap<>();
     String[] topTenUrls = new String[11];
 
-    public void process() {
+    public void process() throws InvalidFileFormatException {
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                try {
+                    URLData urlData = new URLData(line);
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split("\t");
-                if (parts.length != 3) {
-                    System.out.println("Invalid input line, skipping");
-                    continue;
-                }
-
-                String url = parts[0];
-                int clickCount = Integer.parseInt(parts[2]);
-                if (checkIfInTopTen(clickCount)) {
-                    insertInTopTenUrls(clickCount, url);
-                    urlClickCounts.put(url, urlClickCounts.getOrDefault(url, 0) + clickCount);
+                    String url = urlData.getUrl();
+                    int clickCount = urlData.getClickCount();
+                    if (checkIfInTopTen(clickCount)) {
+                        insertInTopTenUrls(clickCount, url);
+                        urlClickCounts.put(url, urlClickCounts.getOrDefault(url, 0) + clickCount);
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid input line, skipping: " + line);
                 }
             }
 
@@ -37,9 +37,10 @@ public class TopProcessor implements Processor {
                     .limit(10) // Limit to the top 10 URLs
                     .forEach(entry -> System.out.println(entry.getKey() + "\t" + entry.getValue()));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new InvalidFileFormatException(e.getMessage());
         }
     }
+
 
     private boolean checkIfInTopTen(int clickCount) {
         return (getCountByTopIndex(0) == null || getCountByTopIndex(0) <= clickCount);
