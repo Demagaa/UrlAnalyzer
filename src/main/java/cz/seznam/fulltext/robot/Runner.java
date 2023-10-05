@@ -12,7 +12,7 @@ import cz.seznam.fulltext.robot.processor.api.Processor;
 /**
  * Your task is to implement the following application to the best of your abilities:
  *
- * <p>The application reads lines from standard input, processes them using one of the supported
+ * <p>|The application reads lines from standard input, processes them using one of the supported
  * processors, and writes the results to standard output.
  *
  * <p>Lines read from standard input must have the following format to be considered valid:
@@ -112,7 +112,7 @@ public class Runner {
                 processor = new ContentTypeProcessor();
                 break;
             case GREP:
-                processor = new GrepProcessor();
+                processor = new GrepProcessor(regex);
                 break;
             default:
                 System.out.println("Invalid processor type.");
@@ -120,7 +120,7 @@ public class Runner {
         }
 
         // Process the data
-        processor.process(regex);
+        processor.process();
     }
 }
 

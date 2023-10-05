@@ -9,8 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GrepProcessor implements Processor {
+    private String regex;
+    public GrepProcessor(String regex){
+        this.regex = regex;
+    }
 
-    public void process(String regex) throws InvalidFileFormatException {
+    public void process() throws InvalidFileFormatException {
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             Pattern pattern = Pattern.compile(regex);

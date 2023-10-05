@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ContentTypeProcessor implements Processor {
 
-    public void process(String regex) throws InvalidFileFormatException {
+    public void process() throws InvalidFileFormatException {
         Map<String, Integer> contentTypeCounts = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             String line;

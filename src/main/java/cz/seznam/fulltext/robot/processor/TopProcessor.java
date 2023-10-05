@@ -12,7 +12,7 @@ public class TopProcessor implements Processor {
     Map<String, Integer> urlClickCounts = new HashMap<>();
     String[] topTenUrls = new String[11];
 
-    public void process(String regex) {
+    public void process() {
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             String line;
